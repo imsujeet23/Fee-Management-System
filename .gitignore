@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment and environment settings
+venv/
+.env
+
+# Local database
+*.db
+*.sqlite3
+
+# Trained machine-learning artifacts
+*.pkl
+
+# Tool and OS files
+.DS_Store
+.vscode/
+.pytest_cache/
+*.log
