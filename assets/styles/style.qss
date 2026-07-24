@@ -8,6 +8,7 @@ QMainWindow {
 
 QWidget {
     background-color: #F5F7FA;
+    color: #2C3E50;
     font-family: "Segoe UI";
     font-size: 11pt;
 }
@@ -29,10 +30,13 @@ QLabel#titleLabel {
 /* ---------- Line Edit ---------- */
 
 QLineEdit {
-    background: white;
+    background-color: white;
+    color: black;
     border: 2px solid #D6D6D6;
     border-radius: 8px;
     padding: 8px;
+    selection-background-color: #1976D2;
+    selection-color: white;
 }
 
 QLineEdit:focus {
@@ -77,4 +81,52 @@ QGroupBox {
 QGroupBox::title {
     left: 10px;
     padding: 2px;
+}
+/* ---------------------------
+   Statistic Cards
+---------------------------- */
+
+QFrame#statCard{
+    background:white;
+    border-radius:15px;
+    border:1px solid #D9D9D9;
+}
+
+QFrame#statCard:hover{
+    border:2px solid #1976D2;
+}
+
+QLabel#cardTitle{
+    font-size:14px;
+    color:#666666;
+    font-weight:600;
+}
+
+QLabel#cardValue{
+    font-size:28px;
+    color:#1565C0;
+    font-weight:bold;
+}
+/* ---------------- Top Bar ---------------- */
+
+QWidget#topbar{
+    background-color: white;
+    border-bottom:1px solid #DADADA;
+}
+
+QLabel#topbarTitle{
+    color:#1565C0;
+    font-size:22px;
+    font-weight:bold;
+}
+
+QLabel#userLabel{
+    color:#2C3E50;
+    font-weight:bold;
+    font-size:13px;
+}
+
+QLabel#dateLabel{
+    color:#6B7280;
+    font-size:12px;
 }

@@ -20,7 +20,17 @@ class Database:
             role TEXT NOT NULL
         )
         """)
-
+        self.cursor.execute("""
+CREATE TABLE IF NOT EXISTS courses(
+    course_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course_code TEXT UNIQUE NOT NULL,
+    course_name TEXT NOT NULL,
+    duration TEXT NOT NULL,
+    total_semesters INTEGER NOT NULL,
+    annual_fee REAL NOT NULL,
+    status TEXT NOT NULL
+)
+""")
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS students(
             student_id INTEGER PRIMARY KEY AUTOINCREMENT,
