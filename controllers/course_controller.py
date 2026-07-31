@@ -1,56 +1,31 @@
-from database.database import Database
+from services.course_service import CourseService
 
 
 class CourseController:
 
     def __init__(self):
-        self.db = Database()
+        self.service = CourseService()
 
     def add_course(
         self,
-        course_code,
-        course_name,
+        code,
+        name,
         duration,
-        total_semesters,
-        annual_fee,
+        semesters,
+        fee,
         status
     ):
-
-        self.db.execute(
-            """
-            INSERT INTO courses(
-                course_code,
-                course_name,
-                duration,
-                total_semesters,
-                annual_fee,
-                status
-            )
-
-            VALUES(?,?,?,?,?,?)
-            """,
-            (
-                course_code,
-                course_name,
-                duration,
-                total_semesters,
-                annual_fee,
-                status
-            )
+        self.service.create_course(
+            code,
+            name,
+            duration,
+            semesters,
+            fee,
+            status
         )
 
     def get_courses(self):
-
-        return self.db.fetchall(
-            """
-            SELECT * FROM courses
-            ORDER BY course_name
-            """
-        )
+        return self.service.get_all_courses()
 
     def delete_course(self, course_id):
-
-        self.db.execute(
-            "DELETE FROM courses WHERE course_id=?",
-            (course_id,)
-        )
+        self.service.delete_course(course_id)

@@ -105,8 +105,8 @@ class LoginWindow(QWidget):
         valid = self.auth.login(username, password)
 
         if valid:
-
-          self.app.show_dashboard()
+            self.app.show_dashboard()
+            return
 
         QMessageBox.critical(
             self,

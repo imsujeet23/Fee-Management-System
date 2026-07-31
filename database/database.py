@@ -25,10 +25,11 @@ CREATE TABLE IF NOT EXISTS courses(
     course_id INTEGER PRIMARY KEY AUTOINCREMENT,
     course_code TEXT UNIQUE NOT NULL,
     course_name TEXT NOT NULL,
-    duration TEXT NOT NULL,
+    duration_months INTEGER NOT NULL,
     total_semesters INTEGER NOT NULL,
     annual_fee REAL NOT NULL,
-    status TEXT NOT NULL
+    status TEXT NOT NULL CHECK(status IN ('Active', 'Inactive')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 """)
         self.cursor.execute("""
