@@ -6,10 +6,12 @@ DB_PATH = BASE_DIR / "fee_management.db"
 
 
 class Database:
-    def __init__(self):
-        self.connection = sqlite3.connect(DB_PATH)
+    def __init__(self, db_path: str | Path | None = None):
+        """Open the application database (or an explicit database for tests)."""
+        self.connection = sqlite3.connect(db_path or DB_PATH)
         self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
+        self.cursor.execute("PRAGMA foreign_keys = ON")
 
     def create_tables(self):
         self.cursor.execute("""
@@ -78,6 +80,7 @@ CREATE TABLE IF NOT EXISTS courses(
     def execute(self, query, values=()):
         self.cursor.execute(query, values)
         self.connection.commit()
+        return self.cursor.lastrowid
 
     def fetchone(self, query, values=()):
         self.cursor.execute(query, values)
