@@ -35,20 +35,26 @@ CREATE TABLE IF NOT EXISTS courses(
 )
 """)
         self.cursor.execute("""
-        CREATE TABLE IF NOT EXISTS students(
-            student_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            first_name TEXT NOT NULL,
-            last_name TEXT NOT NULL,
-            gender TEXT,
-            dob TEXT,
-            email TEXT UNIQUE,
-            phone TEXT,
-            address TEXT,
-            course TEXT,
-            semester INTEGER,
-            admission_date TEXT
-        )
-        """)
+CREATE TABLE IF NOT EXISTS students(
+    student_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    registration_no TEXT UNIQUE NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    gender TEXT NOT NULL,
+    dob TEXT NOT NULL,
+    email TEXT UNIQUE,
+    phone TEXT,
+    address TEXT,
+    course_id INTEGER NOT NULL,
+    semester INTEGER NOT NULL,
+    admission_date TEXT NOT NULL,
+    photo_path TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY(course_id)
+    REFERENCES courses(course_id)
+)
+""")
 
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS fee_structure(

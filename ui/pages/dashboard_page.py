@@ -1,6 +1,5 @@
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtWidgets import QGridLayout
-
 from ui.widgets.stat_card import StatCard
 
 
@@ -23,6 +22,6 @@ class DashboardPage(QWidget):
         layout.addWidget(self.pending, 1, 0)
         layout.addWidget(self.today, 1, 1)
 
-        layout.setContentsMargins(30,30,30,30)
+        layout.setContentsMargins(30, 30, 30, 30)
 
         self.setLayout(layout)
