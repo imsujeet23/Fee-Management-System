@@ -1,7 +1,5 @@
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QWidget,
-    QLabel,
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
@@ -13,9 +11,13 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
+    QMessageBox,
 )
+
+from PyQt6.QtCore import QDate
+
 from controllers.student_controller import StudentController
-from PyQt6.QtWidgets import QMessageBox
+
 
 class StudentPage(QWidget):
 
@@ -26,21 +28,22 @@ class StudentPage(QWidget):
 
         self.setup_ui()
 
+        # Load initial data
         self.load_registration_number()
         self.load_courses()
 
-    def setup_ui(self):
+    # =========================================================
+    # UI SETUP
+    # =========================================================
 
-        # =====================================================
-        # MAIN LAYOUT
-        # =====================================================
+    def setup_ui(self):
 
         main_layout = QHBoxLayout(self)
         main_layout.setContentsMargins(20, 20, 20, 20)
         main_layout.setSpacing(20)
 
         # =====================================================
-        # LEFT PANEL - STUDENT FORM
+        # LEFT SIDE - STUDENT FORM
         # =====================================================
 
         form_group = QGroupBox("Student Registration")
@@ -74,6 +77,7 @@ class StudentPage(QWidget):
         self.dob_input = QDateEdit()
         self.dob_input.setCalendarPopup(True)
         self.dob_input.setDisplayFormat("dd-MM-yyyy")
+        self.dob_input.setDate(QDate(2000, 1, 1))
 
         # Email
         self.email_input = QLineEdit()
@@ -105,12 +109,10 @@ class StudentPage(QWidget):
         self.admission_date_input = QDateEdit()
         self.admission_date_input.setCalendarPopup(True)
         self.admission_date_input.setDisplayFormat("dd-MM-yyyy")
-        self.admission_date_input.setDate(
-            self.admission_date_input.date()
-        )
+        self.admission_date_input.setDate(QDate.currentDate())
 
         # =====================================================
-        # FORM
+        # ADD FIELDS TO FORM
         # =====================================================
 
         form_layout.addRow(
@@ -178,17 +180,14 @@ class StudentPage(QWidget):
         self.clear_button = QPushButton("Clear")
 
         button_layout = QHBoxLayout()
-
         button_layout.addWidget(self.save_button)
         button_layout.addWidget(self.update_button)
 
         second_button_layout = QHBoxLayout()
-
         second_button_layout.addWidget(self.delete_button)
         second_button_layout.addWidget(self.clear_button)
 
         left_layout = QVBoxLayout()
-
         left_layout.addLayout(form_layout)
         left_layout.addSpacing(15)
         left_layout.addLayout(button_layout)
@@ -198,7 +197,7 @@ class StudentPage(QWidget):
         form_group.setLayout(left_layout)
 
         # =====================================================
-        # RIGHT PANEL - STUDENT TABLE
+        # RIGHT SIDE - STUDENT TABLE
         # =====================================================
 
         table_group = QGroupBox("Student List")
@@ -259,27 +258,57 @@ class StudentPage(QWidget):
 
         main_layout.addWidget(form_group, 1)
         main_layout.addWidget(table_group, 2)
+
+        # =====================================================
+        # BUTTON CONNECTIONS
+        # =====================================================
+
+        self.save_button.clicked.connect(self.save_student)
+        self.clear_button.clicked.connect(self.clear_form)
+
+        self.refresh_button.clicked.connect(
+            self.load_students
+        )
+
+    # =========================================================
+    # LOAD REGISTRATION NUMBER
+    # =========================================================
+
     def load_registration_number(self):
 
         try:
-            registration_no = self.controller.registration_number()
 
-            self.registration_input.setText(
-                registration_no
-            )
+            if hasattr(self.controller, "get_next_registration_number"):
+
+                registration_no = (
+                    self.controller.get_next_registration_number()
+                )
+
+                self.registration_input.setText(
+                    registration_no
+                )
+
+            else:
+
+                self.registration_input.setText("STU0001")
 
         except Exception as e:
 
-            QMessageBox.critical(
-                self,
-                "Error",
-                f"Unable to generate registration number:\n{e}"
-            )
+            print("Registration number error:", e)
+
+            self.registration_input.setText("STU0001")
+
+    # =========================================================
+    # LOAD COURSES
+    # =========================================================
 
     def load_courses(self):
 
         try:
+
             courses = self.controller.get_courses()
+
+            print("Courses received:", courses)
 
             self.course_combo.clear()
 
@@ -290,15 +319,357 @@ class StudentPage(QWidget):
 
             for course in courses:
 
+                # Supports dictionary results
+                if isinstance(course, dict):
+
+                    course_id = course.get("course_id")
+                    course_name = course.get("course_name")
+
+                # Supports tuple/list results
+                else:
+
+                    course_id = course[0]
+                    course_name = course[1]
+
                 self.course_combo.addItem(
-                    course["course_name"],
-                    course["course_id"]
+                    course_name,
+                    course_id
+                )
+
+            print(
+                "Courses loaded into dropdown:",
+                self.course_combo.count() - 1
+            )
+
+        except Exception as e:
+
+            print("Course loading error:", e)
+
+            QMessageBox.critical(
+                self,
+                "Course Loading Error",
+                f"Unable to load courses:\n{e}"
+            )
+
+    # =========================================================
+    # SAVE STUDENT
+    # =========================================================
+
+    def save_student(self):
+
+        registration_no = (
+            self.registration_input.text().strip()
+        )
+
+        first_name = (
+            self.first_name_input.text().strip()
+        )
+
+        last_name = (
+            self.last_name_input.text().strip()
+        )
+
+        gender = self.gender_combo.currentText()
+
+        dob = self.dob_input.date().toString(
+            "yyyy-MM-dd"
+        )
+
+        email = (
+            self.email_input.text().strip()
+        )
+
+        phone = (
+            self.phone_input.text().strip()
+        )
+
+        address = (
+            self.address_input.text().strip()
+        )
+
+        # IMPORTANT:
+        # Save course NAME because the existing database
+        # has a "course" column rather than "course_id".
+
+        course = (
+            self.course_combo.currentText()
+        )
+
+        semester = (
+            self.semester_combo.currentData()
+        )
+
+        admission_date = (
+            self.admission_date_input.date().toString(
+                "yyyy-MM-dd"
+            )
+        )
+
+        # =====================================================
+        # VALIDATION
+        # =====================================================
+
+        if not first_name:
+
+            QMessageBox.warning(
+                self,
+                "Validation Error",
+                "Please enter first name."
+            )
+
+            self.first_name_input.setFocus()
+
+            return
+
+        if not last_name:
+
+            QMessageBox.warning(
+                self,
+                "Validation Error",
+                "Please enter last name."
+            )
+
+            self.last_name_input.setFocus()
+
+            return
+
+        if gender == "Select Gender":
+
+            QMessageBox.warning(
+                self,
+                "Validation Error",
+                "Please select gender."
+            )
+
+            return
+
+        if course == "Select Course":
+
+            QMessageBox.warning(
+                self,
+                "Validation Error",
+                "Please select a course."
+            )
+
+            return
+
+        if semester is None:
+
+            QMessageBox.warning(
+                self,
+                "Validation Error",
+                "Please select semester."
+            )
+
+            return
+
+        # =====================================================
+        # SAVE TO DATABASE
+        # =====================================================
+
+        try:
+
+            self.controller.add_student(
+                registration_no,
+                first_name,
+                last_name,
+                gender,
+                dob,
+                email,
+                phone,
+                address,
+                course,
+                semester,
+                admission_date
+            )
+
+            QMessageBox.information(
+                self,
+                "Success",
+                f"Student {registration_no} added successfully."
+            )
+
+            # Refresh table
+            self.load_students()
+
+            # Clear form
+            self.clear_form()
+
+        except Exception as e:
+
+            print("Student save error:", e)
+
+            QMessageBox.critical(
+                self,
+                "Unable to Save Student",
+                f"Unable to save student:\n{e}"
+            )
+
+    # =========================================================
+    # LOAD STUDENTS
+    # =========================================================
+
+    def load_students(self):
+
+        try:
+
+            if not hasattr(
+                self.controller,
+                "get_students"
+            ):
+
+                print(
+                    "get_students() is not available yet."
+                )
+
+                return
+
+            students = self.controller.get_students()
+
+            self.table.setRowCount(0)
+
+            for student in students:
+
+                row = self.table.rowCount()
+
+                self.table.insertRow(row)
+
+                if isinstance(student, dict):
+
+                    student_id = student.get(
+                        "student_id", ""
+                    )
+
+                    registration_no = student.get(
+                        "registration_no", ""
+                    )
+
+                    first_name = student.get(
+                        "first_name", ""
+                    )
+
+                    last_name = student.get(
+                        "last_name", ""
+                    )
+
+                    course = student.get(
+                        "course", ""
+                    )
+
+                    semester = student.get(
+                        "semester", ""
+                    )
+
+                    phone = student.get(
+                        "phone", ""
+                    )
+
+                else:
+
+                    student_id = student[0]
+                    registration_no = student[1]
+                    first_name = student[2]
+                    last_name = student[3]
+                    course = student[8]
+                    semester = student[9]
+                    phone = student[6]
+
+                self.table.setItem(
+                    row,
+                    0,
+                    QTableWidgetItem(
+                        str(student_id)
+                    )
+                )
+
+                self.table.setItem(
+                    row,
+                    1,
+                    QTableWidgetItem(
+                        str(registration_no)
+                    )
+                )
+
+                self.table.setItem(
+                    row,
+                    2,
+                    QTableWidgetItem(
+                        f"{first_name} {last_name}"
+                    )
+                )
+
+                self.table.setItem(
+                    row,
+                    3,
+                    QTableWidgetItem(
+                        str(course)
+                    )
+                )
+
+                self.table.setItem(
+                    row,
+                    4,
+                    QTableWidgetItem(
+                        f"Semester {semester}"
+                    )
+                )
+
+                self.table.setItem(
+                    row,
+                    5,
+                    QTableWidgetItem(
+                        str(phone)
+                    )
+                )
+
+                self.table.setItem(
+                    row,
+                    6,
+                    QTableWidgetItem(
+                        "View"
+                    )
                 )
 
         except Exception as e:
 
-            QMessageBox.critical(
-                self,
-                "Error",
-                f"Unable to load courses:\n{e}"
-            )
+            print("Student loading error:", e)
+
+    # =========================================================
+    # CLEAR FORM
+    # =========================================================
+
+    def clear_form(self):
+
+        self.first_name_input.clear()
+        self.last_name_input.clear()
+
+        self.gender_combo.setCurrentIndex(0)
+
+        self.dob_input.setDate(
+            QDate(2000, 1, 1)
+        )
+
+        self.email_input.clear()
+        self.phone_input.clear()
+        self.address_input.clear()
+
+        self.course_combo.setCurrentIndex(0)
+        self.semester_combo.setCurrentIndex(0)
+
+        self.admission_date_input.setDate(
+            QDate.currentDate()
+        )
+
+        self.load_registration_number()
+
+    # =========================================================
+    # REFRESH WHEN PAGE OPENS
+    # =========================================================
+
+    def showEvent(self, event):
+
+        super().showEvent(event)
+
+        self.load_courses()
+        self.load_registration_number()
+        self.load_students()

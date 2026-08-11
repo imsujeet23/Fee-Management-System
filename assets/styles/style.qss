@@ -130,3 +130,106 @@ QLabel#dateLabel{
     color:#6B7280;
     font-size:12px;
 }
+/* =====================================================
+   LIGHT FORM CONTROLS
+   ===================================================== */
+
+QComboBox {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    padding: 0px 6px;
+    min-height: 26px;
+    max-height: 30px;
+    font-size: 14px;
+}
+
+QComboBox:hover {
+    border: 1px solid #b5b5b5;
+}
+
+QComboBox:focus {
+    border: 1px solid #b5b5b5;
+}
+
+QComboBox::drop-down {
+    background-color: #ffffff;
+    border: none;
+    border-left: 1px solid #d0d0d0;
+    width: 26px;
+}
+
+QComboBox::down-arrow {
+    width: 7px;
+    height: 7px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: 1px solid #cfcfcf;
+    selection-background-color: #e8f2ff;
+    selection-color: #2c3e50;
+    font-size: 14px;
+}
+
+
+/* =====================================================
+   DATE EDIT - COMPACT LIGHT STYLE
+   ===================================================== */
+
+QDateEdit {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    padding: 0px 6px;
+    min-height: 26px;
+    max-height: 30px;
+    font-size: 14px;
+}
+
+QDateEdit:hover {
+    border: 1px solid #b5b5b5;
+}
+
+QDateEdit:focus {
+    border: 1px solid #b5b5b5;
+}
+
+QDateEdit::drop-down {
+    background-color: #ffffff;
+    border: none;
+    border-left: 1px solid #d0d0d0;
+    width: 26px;
+}
+
+QDateEdit::down-arrow {
+    width: 7px;
+    height: 7px;
+}
+
+
+/* =====================================================
+   CALENDAR
+   ===================================================== */
+
+QCalendarWidget {
+    background-color: #ffffff;
+    color: #2c3e50;
+}
+
+QCalendarWidget QToolButton {
+    background-color: #ffffff;
+    color: #2c3e50;
+    border: none;
+    font-size: 14px;
+}
+
+QCalendarWidget QAbstractItemView {
+    background-color: #ffffff;
+    color: #2c3e50;
+    selection-background-color: #e8f2ff;
+    selection-color: #2c3e50;
+}

@@ -1,14 +1,10 @@
-from controllers.course_controller import CourseController
+from controllers.student_controller import StudentController
 
-controller = CourseController()
+controller = StudentController()
 
-controller.add_course(
-    "CS",
-    "Computer Science",
-    24,
-    4,
-    4500,
-    "Active"
-)
+courses = controller.get_courses()
 
-print(controller.get_courses())
+print("Courses found:", len(courses))
+
+for course in courses:
+    print(course)

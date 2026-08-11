@@ -7,10 +7,42 @@ class StudentController:
         self.service = StudentService()
 
     def registration_number(self):
+
         return self.service.generate_registration_no()
 
     def get_courses(self):
+
         return self.service.get_courses()
 
     def get_students(self):
+
         return self.service.get_students()
+
+    def add_student(
+        self,
+        registration_no,
+        first_name,
+        last_name,
+        gender,
+        dob,
+        email,
+        phone,
+        address,
+        course,
+        semester,
+        admission_date
+):
+
+        return self.service.create_student(
+            registration_no,
+            first_name,
+            last_name,
+            gender,
+            dob,
+            email,
+            phone,
+            address,
+            course,
+            semester,
+            admission_date
+    )
